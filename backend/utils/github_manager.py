@@ -5,11 +5,11 @@ import subprocess
 import asyncio
 from typing import Any, Dict, List
 from datetime import datetime, timezone
+import time
 
 from langchain_community.document_loaders import DirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from database import GITCHAT_DB
 from logger import backend_logger
 from utils.weaviate_manager import WeaviateManager
 
@@ -17,11 +17,11 @@ from utils.weaviate_manager import WeaviateManager
 class GithubManager:
     def __init__(
         self,
-        vector_store_manager: WeaviateManager,
+        mongo_db,
         mongo_collection: str = "repos"
     ):
-        self.vector_store_manager = vector_store_manager
-        self.mongo = GITCHAT_DB[mongo_collection]
+        self.vector_store_manager = WeaviateManager()
+        self.mongo = mongo_db[mongo_collection]
 
     def _get_branches(self, repo_url: str) -> List[str]:
         result = subprocess.run(
@@ -70,7 +70,7 @@ class GithubManager:
         return splitter.split_documents(docs)
 
     async def _process_branch(self, repo_url: str, owner: str, repo_name: str, branch: str, embeddings: Any) -> Dict:
-        vs_collection_name = f"{owner}_{repo_name}_{branch}".replace("-", "_")
+        vs_collection_name = f"{owner}_{repo_name}_{branch}".replace("-", "_").lower()
         temp_dir = tempfile.mkdtemp()
 
         try:
@@ -119,14 +119,22 @@ class GithubManager:
         ]
         results = await asyncio.gather(*tasks)
 
+        successful_branches = [r for r in results if r.get("vs_collection")]
+        failed_branches = [r for r in results if not r.get("vs_collection")]
+
+        if not successful_branches:
+            backend_logger.error("All branches failed to process. Aborting MongoDB insert.")
+            raise RuntimeError("Failed to ingest any branches from the repository.")
+
         repo_meta = {
             "repo_url": repo_url,
             "repo_name": repo_name,
             "owner": owner,
             "branches": results,
-            "created_at": datetime.now(timezone.utc)
+            "created_at": int(time.time()),
         }
 
         backend_logger.info("Saving metadata to MongoDB...")
         self.mongo.insert_one(repo_meta)
         return repo_meta
+

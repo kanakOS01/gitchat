@@ -1,9 +1,10 @@
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 from config import settings
 
 
-embedder = GoogleGenerativeAIEmbeddings(
-    model="models/embedding-001",
-    api_key=settings.GEMINI_API_KEY,
+embedder = OpenAIEmbeddings(
+    model="text-embedding-3-large",
+    dimensions=1024,
+    api_key=settings.OPENAI_API_KEY,
 )

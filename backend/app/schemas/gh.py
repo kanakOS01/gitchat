@@ -22,5 +22,5 @@ class GithubRepository(BaseModel):
     repo_url: HttpUrl
     repo_name: str
     owner: str
-    created_at: str
+    created_at: int
     branches: List[GithubBranchMetadata]

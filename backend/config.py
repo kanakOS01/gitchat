@@ -1,12 +1,13 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    MONGODB_URI: str = 'mongodb://localhost:27017'
-    GEMINI_API_KEY: str
+    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 
-    class Config:
-        env_file = '.env'
-        env_file_encoding = 'utf-8'
+    MONGODB_URI: str = 'mongodb://localhost:27017'
+    DB_NAME: str = 'gitchat'
+    OPENAI_API_KEY: str
+
+
 
 settings = Settings()
