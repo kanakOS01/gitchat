@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header
 from fastapi.responses import StreamingResponse
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
@@ -14,19 +14,27 @@ router = APIRouter(prefix="/chat")
 
 
 @router.post("/")
-async def chat(payload: ChatRequest):
+async def chat(
+    payload: ChatRequest,
+    authorization: str = Header(None)
+):
     if payload.provider != "openai":
         raise HTTPException(status_code=400, detail="Only OpenAI provider is currently supported")
     
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid Authorization header")
+    api_key = authorization.split(" ")[1]
+
     # llm = ChatGoogleGenerativeAI(
     #     model="gemini-2.5-flash",
     #     temperature=0,
     #     google_api_key=settings.GOOGLE_API_KEY
     # )
     llm = ChatOpenAI(
-        model="gpt-4o-mini",
+        model="gpt-4o",
         temperature=0,
-        api_key=settings.OPENAI_API_KEY
+        api_key=api_key,
+        streaming=True
     )
 
     weaviate_manager = WeaviateManager()
@@ -38,8 +46,7 @@ async def chat(payload: ChatRequest):
 
     rag = RAGQueryEngine(llm=llm)
 
-    async def generate():
-        async for chunk in rag.stream_query(payload.question, docs):
-            yield chunk
-
-    return StreamingResponse(generate(), media_type="text/plain")
+    return StreamingResponse(
+        rag.stream_query(payload.question, docs),
+        media_type="text/plain"
+    )
