@@ -45,7 +45,7 @@ class GithubManager:
     def _load_documents(self, repo_path: str):
         unstructured_loader = DirectoryLoader(
             path=repo_path,
-            exclude=["**/*.pptx", "**/*.docx", "**/*.doc", "**/*.pdf"],
+            exclude=["**/*.pptx", "**/*.docx", "**/*.doc", "**/*.pdf", "**/*.png", "**/*.jpg", "**/*.jpeg"],
             glob=["**/*.md", "**/*.rst"],
             silent_errors=True,
             show_progress=True,
@@ -54,7 +54,7 @@ class GithubManager:
         )
         text_loader = DirectoryLoader(
             path=repo_path,
-            exclude=["**/*.md", "**/*.rst", "**/*.pptx", "**/*.doc", "**/*.docx", "**/*.pdf"],
+            exclude=["**/*.md", "**/*.rst", "**/*.pptx", "**/*.doc", "**/*.docx", "**/*.pdf", "**/*.png", "**/*.jpg", "**/*.jpeg"],
             glob=["**/*.*"],
             silent_errors=True,
             show_progress=True,
