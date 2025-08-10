@@ -1,0 +1,20 @@
+[project]
+name = "gitchat-mcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp>=1.12.4",
+    "tqdm>=4.67.1",
+    "unstructured[md,rst]>=0.18.11",
+    "uvicorn>=0.35.0",
+    "weaviate-client>=4.16.0",
+    "langchain>=0.3.26",
+    "langchain-community>=0.3.27",
+    "langchain-google-genai>=2.1.8",
+    "langchain-openai>=0.3.28",
+    "langchain-text-splitters>=0.3.8",
+    "langchain-weaviate>=0.0.5",
+    "weaviate>=0.1.2",
+]
