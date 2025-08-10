@@ -7,7 +7,8 @@ class Settings(BaseSettings):
     MONGODB_URI: str = 'mongodb://localhost:27017'
     DB_NAME: str = 'gitchat'
     OPENAI_API_KEY: str
-
+    WEAVIATE_HOST: str = 'weaviate'
+    WEAVIATE_PORT: int = 8080
 
 
 settings = Settings()

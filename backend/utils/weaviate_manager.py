@@ -8,11 +8,13 @@ from langchain_weaviate.vectorstores import WeaviateVectorStore
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 
+from config import settings
+
 
 class WeaviateManager:
-    def __init__(self, host: str = 'localhost', port: int = 8080):
-        self.host = host
-        self.port = port
+    def __init__(self):
+        self.host = settings.WEAVIATE_HOST
+        self.port = settings.WEAVIATE_PORT
         self.client = weaviate.connect_to_local(
             host=self.host,
             port=self.port,

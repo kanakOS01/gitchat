@@ -44,4 +44,4 @@ if st.button("Ask") and question:
     with st.spinner("Generating answer..."):
         st.write_stream(stream_chat(question, branch_data['vs_collection']))  # Stream directly into the UI
 
-    st.success("Done")
+    # st.success("Done")

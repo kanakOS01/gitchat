@@ -27,6 +27,9 @@ def stream_chat(question: str, collection: str):
         stream=True,
         headers=headers
     ) as resp:
+        if resp.status_code == 401:
+            st.error("Unauthorized. Please provide a valid OpenAI API key.")
+            return
         for chunk in resp.iter_content(chunk_size=None):
             if chunk:
                 yield chunk.decode("utf-8")
