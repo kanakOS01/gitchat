@@ -2,7 +2,7 @@ import streamlit as st
 from datetime import datetime
 from utils import fetch_repos, add_repo
 
-st.set_page_config(page_title="GitChat", layout="wide")
+st.set_page_config(page_title="GitChat", layout="centered")
 
 # Sidebar: BYOK
 st.sidebar.title("🔐 Bring Your Own Key")
@@ -39,7 +39,7 @@ st.subheader("📂 All Available Repositories")
 
 repos = fetch_repos()
 
-cards_per_row = 3
+cards_per_row = 2
 
 for i in range(0, len(repos), cards_per_row):
     cols = st.columns(cards_per_row)
