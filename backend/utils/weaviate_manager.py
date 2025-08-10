@@ -46,7 +46,6 @@ class WeaviateManager:
             text_key="files",
             index_name=collection_name,
             embedding=embeddings,
-            batch_size=1000,
         )
 
     async def retrieve_context(self, question: str, collection: str, embeddings: Any, k: int = 5) -> str:
