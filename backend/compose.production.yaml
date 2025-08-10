@@ -12,8 +12,7 @@ services:
       - WEAVIATE_URL=http://weaviate:8080
     volumes:
       - .:/app
-    restart:
-      - always
+    restart: always
 
   weaviate:
     command:
@@ -47,8 +46,7 @@ services:
     volumes:
       - mongo_data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-    restart:
-      - always
+    restart: always
 
 volumes:
   weaviate_data:
