@@ -32,6 +32,19 @@ class GithubManager:
         )
         lines = result.stdout.strip().split("\n")
         return [line.split("refs/heads/")[1] for line in lines if "refs/heads/" in line]
+    
+    def _get_default_branch(self, repo_url: str) -> str:
+        result = subprocess.run(
+            ["git", "ls-remote", "--symref", repo_url, "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        for line in result.stdout.strip().split("\n"):
+            if line.startswith("ref:"):
+                return line.split("refs/heads/")[1].strip()
+        raise RuntimeError("Could not determine default branch.")
+
 
     def _clone_repo(self, repo_url: str, branch: str, dest: str):
         subprocess.run(
@@ -112,6 +125,11 @@ class GithubManager:
         branches = self._get_branches(repo_url)
 
         backend_logger.info(f"Found branches for {repo_url}: {branches}")
+
+        if len(branches) > 10:
+            default_branch = self._get_default_branch(repo_url)
+            backend_logger.info(f"More than 10 branches detected. Only processing default branch: {default_branch}")
+            branches = [default_branch]
 
         tasks = [
             self._process_branch(repo_url, owner, repo_name, branch, embeddings)
