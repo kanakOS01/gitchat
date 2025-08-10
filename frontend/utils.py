@@ -1,7 +1,7 @@
 import requests
 import streamlit as st
 
-API_BASE = "https://34.31.96.182:8000"
+API_BASE = "http://34.31.96.182:8000"
 
 if "openai_key" not in st.session_state:
     st.session_state.openai_key = ""
